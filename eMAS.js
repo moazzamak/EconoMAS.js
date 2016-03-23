@@ -70,7 +70,7 @@ var _increment;
 			for (var n = 0; n < 1 + floor(rX*_maxConnect); n++) {
 				_objArr[ _sortedArray[i].objID ].objTrade( _sortedArray[ floor( random(i, _pop-1) ) ].objID );
 			}
-			fill(color(255, 0, 0));
+			fill(color(_objArr[i].objHonesty*255, 0, 0));
 			noStroke();
 			ellipse(rX * _frameX, rY * _frameY, _sX, _sY);
 
