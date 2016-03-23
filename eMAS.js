@@ -5,14 +5,14 @@ var _sY;
 var _pop;
 var _objArr = [];
 var _sortedArray = [];
-var _honestyMin;
+var _cheatChanceMax;
 var _maxConnect;
 var _count;
 var _increment;
 
 	function setup(){
 		createCanvas(_frameX, _frameY);
-		createPopulation(500, 10, 10, 25, 0.8, 10, 0.01);
+		createPopulation(100, 10, 10, 25, 0.2, 10, 100);
 		_count = 0;
 	}
 
@@ -26,11 +26,11 @@ var _increment;
 		_count++;
 	}
 
-	function createPopulation(pop, sX, sY, defVal, honestyMin, maxConnect, increment){
+	function createPopulation(pop, sX, sY, defVal, cheatChanceMin, maxConnect, increment){
 		_sX = sX;
 		_sY = sY;
 		_pop = pop;
-		_honestyMin = honestyMin;
+		_cheatChanceMax = cheatChanceMin;
 		_maxConnect = maxConnect;
 		_increment = increment;
 
@@ -38,11 +38,11 @@ var _increment;
 			var tempObj = {
 				objID: i,
 				objVal: defVal,
-				objHonesty: random(_honestyMin, 0.999),
+				objCheatChance: random(_cheatChanceMax),
 				objTrade: function(i){
-					if ( this.objHonesty < random() ){
+					if ( random() < this.objCheatChance && this.objCheatChance > _objArr[i].objCheatChance ){
 						// Cheat
-						print ("Object " + this.objID + " cheated " + i);
+						//print ("Object " + this.objID + " cheated " + i);
 						_objArr[i].swindled();
 						this.traded();
 					}
@@ -64,15 +64,15 @@ var _increment;
 		_sortedArray = _sortedArray.sort(compareObjs);
 
 		for (var i = 0; i < _pop; i++){
-			rX = (_sortedArray[0].objVal - _objArr[i].objVal) / _sortedArray[0].objVal;
+			rX = _objArr[i].objVal;
 			rY = i/_pop;
 
-			for (var n = 0; n < 1 + floor(rX*_maxConnect); n++) {
-				_objArr[ _sortedArray[i].objID ].objTrade( _sortedArray[ floor( random(i, _pop-1) ) ].objID );
+			for (var n = 0; n < 1 + floor(rX/_sortedArray[0].objVal*_maxConnect); n++) {
+				_objArr[ _sortedArray[i].objID ].objTrade( _sortedArray[ floor( random(i + 1, _pop-1) ) ].objID );
 			}
-			fill(color(_objArr[i].objHonesty*255, 0, 0));
+			fill(color((_objArr[i].objCheatChance/_cheatChanceMax)*255, 0, 0));
 			noStroke();
-			ellipse(rX * _frameX, rY * _frameY, _sX, _sY);
+			ellipse(rX/(_frameX/0.5) + (_frameX*.5), rY * _frameY, _sX, _sY);
 
 		}
 	}
